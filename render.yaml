@@ -1,0 +1,27 @@
+services:
+  - type: web
+    name: agromind-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: PORT
+        value: 5050
+      - key: NODE_ENV
+        value: production
+      - key: JWT_SECRET
+        generateValue: true
+      - key: AGROMONITORING_API_KEY
+        sync: false
+      - key: PLANT_ID_API_KEY
+        sync: false
+      - key: ML_SERVICE_URL
+        sync: false # set this after the ml-service deploys, e.g. https://agromind-ml-service.onrender.com
+
+  - type: web
+    name: agromind-ml-service
+    runtime: python
+    rootDir: ml-service
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT

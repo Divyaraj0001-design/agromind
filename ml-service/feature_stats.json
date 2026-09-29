@@ -1,0 +1,79 @@
+{
+  "features": [
+    "n",
+    "p",
+    "k",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ],
+  "stats": {
+    "n": {
+      "min": 5.35,
+      "max": 153.5,
+      "mean": 50.399490909090915,
+      "std": 35.471467507060694
+    },
+    "p": {
+      "min": 1.21,
+      "max": 165.38,
+      "mean": 52.87595454545455,
+      "std": 33.49486858932448
+    },
+    "k": {
+      "min": 0.0,
+      "max": 241.42,
+      "mean": 48.690113636363634,
+      "std": 51.092629246352836
+    },
+    "temperature": {
+      "min": 17.08,
+      "max": 36.38,
+      "mean": 25.638254545454547,
+      "std": 3.672380791892523
+    },
+    "humidity": {
+      "min": 4.71,
+      "max": 100.0,
+      "mean": 71.52064545454544,
+      "std": 22.215143811899768
+    },
+    "ph": {
+      "min": 4.82,
+      "max": 8.04,
+      "mean": 6.471318181818182,
+      "std": 0.5433297079008319
+    },
+    "rainfall": {
+      "min": 5.0,
+      "max": 300.0,
+      "mean": 103.31232727272727,
+      "std": 52.538568663603364
+    }
+  },
+  "crops": [
+    "apple",
+    "banana",
+    "blackgram",
+    "chickpea",
+    "coconut",
+    "coffee",
+    "cotton",
+    "grapes",
+    "jute",
+    "kidneybeans",
+    "lentil",
+    "maize",
+    "mango",
+    "mothbeans",
+    "mungbean",
+    "muskmelon",
+    "orange",
+    "papaya",
+    "pigeonpeas",
+    "pomegranate",
+    "rice",
+    "watermelon"
+  ]
+}
