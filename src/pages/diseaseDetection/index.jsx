@@ -30,12 +30,6 @@ const diseases = [
     }
 ]
 
-const uploadedImages = [
-    { name: 'field_sample_1.jpg', size: '2.4 MB', status: 'analyzed', badge: 'Leaf Rust Detected' },
-    { name: 'crop_photo_march.jpg', size: '1.8 MB', status: 'analyzed', badge: 'Healthy' },
-    { name: 'damaged_leaf.jpg', size: '3.1 MB', status: 'analyzing' },
-]
-
 const ConfidenceBar = ({ value, color }) => (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{ flex: 1, height: 6, background: 'rgba(255,255,255,0.06)', borderRadius: 100, overflow: 'hidden' }}>
@@ -89,6 +83,7 @@ export default function DiseaseDetection() {
         const topDisease = data.diseases?.[0]
         if (!topDisease && data.isHealthy) {
             setResult({ isHealthy: true, diseases: [], plant: data.plant, source: data.source })
+            setImages(prev => [{ name: currentFile.name, size: `${(currentFile.size / (1024*1024)).toFixed(1)} MB`, status: 'analyzed', badge: 'Healthy' }, ...prev.slice(0, 4)])
             toast.success('🌿 Plant appears healthy!')
             return
         }
@@ -256,7 +251,12 @@ export default function DiseaseDetection() {
                         <div style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>Recent Scans</div>
                         <div style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 16 }}>Your uploaded photos & analysis history</div>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                            {uploadedImages.map((img, i) => (
+                            {images.length === 0 && (
+                                <div style={{ fontSize: 13, color: 'var(--text-muted)', padding: '8px 0' }}>
+                                    No scans yet — upload a plant photo to get started.
+                                </div>
+                            )}
+                            {images.map((img, i) => (
                                 <div key={i} style={{
                                     display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px',
                                     background: 'rgba(255,255,255,0.02)', borderRadius: 10,
