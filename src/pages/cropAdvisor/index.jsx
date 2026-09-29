@@ -94,6 +94,15 @@ export default function CropAdvisor() {
             toast.error(`Please fill in: ${missing.join(', ')}`)
             return
         }
+        const ranges = { N: [0, 200], P: [0, 200], K: [0, 200], temperature: [-10, 55], humidity: [0, 100], ph: [0, 14], rainfall: [0, 3000] }
+        const outOfRange = Object.entries(ranges).filter(([k, [lo, hi]]) => {
+            const v = parseFloat(mlInputs[k])
+            return Number.isNaN(v) || v < lo || v > hi
+        })
+        if (outOfRange.length > 0) {
+            setMlError(outOfRange.map(([k, [lo, hi]]) => `${k} must be between ${lo} and ${hi}`).join('; '))
+            return
+        }
         setLoading(true)
         setMlError(null)
         setMlResult(null)
