@@ -6,10 +6,10 @@
 
 const http = require('http')
 const request = require('supertest')
-const appModule = require('../server')
+const app = require('../server')
 
 let server
-beforeAll(done => { server = http.createServer(appModule); server.listen(0, done) })
+beforeAll(done => { server = http.createServer(app); server.listen(0, done) })
 afterAll(done => { server.close(done) })
 
 describe('GET /api/weather/advisory', () => {

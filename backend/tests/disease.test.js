@@ -4,9 +4,8 @@
  * Run: npx jest tests/disease.test.js
  */
 
+const http = require('http')
 const request = require('supertest')
-const path = require('path')
-const fs = require('fs')
 const app = require('../server')
 
 // Create a minimal 1x1 pixel PNG for testing (avoids needing a real photo)
@@ -26,9 +25,15 @@ function createMinimalPng() {
     return pngBuffer
 }
 
+// supertest 7 + Express 5: each test file creates its own http.Server from the
+// shared Express app. This avoids listen() conflicts in parallel Jest workers.
+let server
+beforeAll(done => { server = http.createServer(app); server.listen(0, done) })
+afterAll(done => { server.close(done) })
+
 describe('POST /api/disease/analyze', () => {
     it('returns 400 when no image is uploaded', async () => {
-        const res = await request(app)
+        const res = await request(server)
             .post('/api/disease/analyze')
             .timeout(5000)
 
@@ -46,7 +51,7 @@ describe('POST /api/disease/analyze', () => {
 
         const pngBuffer = createMinimalPng()
 
-        const res = await request(app)
+        const res = await request(server)
             .post('/api/disease/analyze')
             .attach('image', pngBuffer, { filename: 'test_leaf.png', contentType: 'image/png' })
             .timeout(10000)
@@ -61,7 +66,7 @@ describe('POST /api/disease/analyze', () => {
     it('returns 415 when a non-image file is uploaded', async () => {
         const textBuffer = Buffer.from('this is not an image')
 
-        const res = await request(app)
+        const res = await request(server)
             .post('/api/disease/analyze')
             .attach('image', textBuffer, { filename: 'not_image.txt', contentType: 'text/plain' })
             .timeout(5000)
@@ -78,7 +83,7 @@ describe('POST /api/disease/analyze', () => {
 
         const pngBuffer = createMinimalPng()
 
-        const res = await request(app)
+        const res = await request(server)
             .post('/api/disease/analyze')
             .attach('image', pngBuffer, { filename: 'leaf.png', contentType: 'image/png' })
             .timeout(35000)

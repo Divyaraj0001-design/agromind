@@ -1,4 +1,5 @@
 require('dotenv').config()
+const http = require('http')
 const express = require('express')
 const cors = require('cors')
 const sqlite3 = require('sqlite3').verbose()
@@ -243,9 +244,14 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5050
 
+// Create an http.Server wrapping the express app.
+// supertest 7 + Express 5 requires an http.Server (not a raw Express app)
+// so that request(server).post(...) can call server.address() correctly.
+const server = http.createServer(app)
+
 // Only start listening when run directly — not when required by tests (supertest)
 if (require.main === module) {
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
         console.log(`🌾 AgroMind backend running on http://localhost:${PORT}`)
         console.log(`   Agromonitoring: ${process.env.AGROMONITORING_API_KEY ? '✅ Key configured' : '⚠️  Key not set (add to .env)'}`)
         console.log(`   Plant.id:       ${process.env.PLANT_ID_API_KEY ? '✅ Key configured' : '⚠️  Key not set (add to .env)'}`)
@@ -255,4 +261,9 @@ if (require.main === module) {
     })
 }
 
-module.exports = app  // for testing — supertest will bind its own port
+// Export both the express app (for tests that need a fresh server each file)
+// and the bound server (for direct use). Tests should use app to create their
+// own http.Server via http.createServer(app) so parallel Jest workers don't
+// conflict on listen.
+module.exports = app
+module.exports.server = server
