@@ -1,0 +1,13 @@
+node_modules
+backend/node_modules
+backend/.env
+backend/database.sqlite
+ml-service/__pycache__
+ml-service/venv
+ml-service/.venv
+src
+public
+dist
+.git
+.env
+*.log
