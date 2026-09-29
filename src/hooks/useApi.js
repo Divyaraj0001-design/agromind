@@ -30,11 +30,20 @@ export function useApi(url, opts = {}) {
                 ...(opts.headers || {}),
             }
 
-            const res = await fetch(API_BASE + url, {
-                method,
-                headers,
-                ...(body ? { body: JSON.stringify(body) } : {}),
-            })
+            // Render's free tier can take ~1 min to wake up; don't spin forever if it never answers
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), 45000)
+            let res
+            try {
+                res = await fetch(API_BASE + url, {
+                    method,
+                    headers,
+                    signal: controller.signal,
+                    ...(body ? { body: JSON.stringify(body) } : {}),
+                })
+            } finally {
+                clearTimeout(timeoutId)
+            }
 
             const json = await res.json()
 
@@ -46,7 +55,9 @@ export function useApi(url, opts = {}) {
                 setError(null)
             }
         } catch (err) {
-            if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
+            if (err.name === 'AbortError') {
+                setError('Server is not responding (it may be waking up). Please retry in a minute.')
+            } else if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
                 setError('Cannot reach backend server. Make sure it is running on port 5050.')
             } else {
                 setError(err.message || 'Unknown error')
